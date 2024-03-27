@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.CustomerMapper">
+    
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="customerId"    column="customer_id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="contact"    column="contact"    />
+        <result property="address"    column="address"    />
+        <result property="registerTime"    column="register_time"    />
+        <result property="lastPurchaseTime"    column="last_purchase_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCustomerVo">
+        select customer_id, customer_name, contact, address, register_time, last_purchase_time, remark from customer
+    </sql>
+
+    <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        <where>  
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="contact != null  and contact != ''"> and contact like concat('%', #{contact}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="lastPurchaseTime != null "> and last_purchase_time = #{lastPurchaseTime}</if>
+            <if test="remark != null  and remark != ''"> and remark like concat('%', #{remark}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerByCustomerId" parameterType="Long" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        where customer_id = #{customerId}
+    </select>
+        
+    <insert id="insertCustomer" parameterType="Customer" useGeneratedKeys="true" keyProperty="customerId">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">customer_name,</if>
+            <if test="contact != null">contact,</if>
+            <if test="address != null">address,</if>
+            <if test="registerTime != null">register_time,</if>
+            <if test="lastPurchaseTime != null">last_purchase_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">#{customerName},</if>
+            <if test="contact != null">#{contact},</if>
+            <if test="address != null">#{address},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+            <if test="lastPurchaseTime != null">#{lastPurchaseTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomer" parameterType="Customer">
+        update customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">customer_name = #{customerName},</if>
+            <if test="contact != null">contact = #{contact},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="registerTime != null">register_time = #{registerTime},</if>
+            <if test="lastPurchaseTime != null">last_purchase_time = #{lastPurchaseTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where customer_id = #{customerId}
+    </update>
+
+    <delete id="deleteCustomerByCustomerId" parameterType="Long">
+        delete from customer where customer_id = #{customerId}
+    </delete>
+
+    <delete id="deleteCustomerByCustomerIds" parameterType="String">
+        delete from customer where customer_id in 
+        <foreach item="customerId" collection="array" open="(" separator="," close=")">
+            #{customerId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.InventoryMapper">
+    
+    <resultMap type="Inventory" id="InventoryResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="stockQuantity"    column="stock_quantity"    />
+        <result property="lastUpdateTime"    column="last_update_time"    />
+    </resultMap>
+
+    <sql id="selectInventoryVo">
+        select record_id, product_id, product_name, stock_quantity, last_update_time from inventory
+    </sql>
+
+    <select id="selectInventoryList" parameterType="Inventory" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="lastUpdateTime != null "> and last_update_time = #{lastUpdateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectInventoryByRecordId" parameterType="Long" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertInventory" parameterType="Inventory" useGeneratedKeys="true" keyProperty="recordId">
+        insert into inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="stockQuantity != null">stock_quantity,</if>
+            <if test="lastUpdateTime != null">last_update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="stockQuantity != null">#{stockQuantity},</if>
+            <if test="lastUpdateTime != null">#{lastUpdateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInventory" parameterType="Inventory">
+        update inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="stockQuantity != null">stock_quantity = #{stockQuantity},</if>
+            <if test="lastUpdateTime != null">last_update_time = #{lastUpdateTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteInventoryByRecordId" parameterType="Long">
+        delete from inventory where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteInventoryByRecordIds" parameterType="String">
+        delete from inventory where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>
