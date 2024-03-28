@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.PurchaseOrderMapper">
+    
+    <resultMap type="PurchaseOrder" id="PurchaseOrderResult">
+        <result property="purchaseOrderId"    column="purchase_order_id"    />
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="staffId"    column="staff_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap id="PurchaseOrderPurchaseOrderDetailResult" type="PurchaseOrder" extends="PurchaseOrderResult">
+        <collection property="purchaseOrderDetailList" notNullColumn="sub_detail_id" javaType="java.util.List" resultMap="PurchaseOrderDetailResult" />
+    </resultMap>
+
+    <resultMap type="PurchaseOrderDetail" id="PurchaseOrderDetailResult">
+        <result property="detailId"    column="sub_detail_id"    />
+        <result property="purchaseOrderId"    column="sub_purchase_order_id"    />
+        <result property="productId"    column="sub_product_id"    />
+        <result property="quantity"    column="sub_quantity"    />
+    </resultMap>
+
+    <sql id="selectPurchaseOrderVo">
+        select purchase_order_id, supplier_id, staff_id, create_time from purchase_order
+    </sql>
+
+    <select id="selectPurchaseOrderList" parameterType="PurchaseOrder" resultMap="PurchaseOrderResult">
+        <include refid="selectPurchaseOrderVo"/>
+        <where>  
+            <if test="purchaseOrderId != null "> and purchase_order_id = #{purchaseOrderId}</if>
+            <if test="supplierId != null "> and supplier_id = #{supplierId}</if>
+            <if test="staffId != null "> and staff_id = #{staffId}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPurchaseOrderByPurchaseOrderId" parameterType="Long" resultMap="PurchaseOrderPurchaseOrderDetailResult">
+        select a.purchase_order_id, a.supplier_id, a.staff_id, a.create_time,
+ b.detail_id as sub_detail_id, b.purchase_order_id as sub_purchase_order_id, b.product_id as sub_product_id, b.quantity as sub_quantity
+        from purchase_order a
+        left join purchase_order_detail b on b.purchase_order_id = a.purchase_order_id
+        where a.purchase_order_id = #{purchaseOrderId}
+    </select>
+        
+    <insert id="insertPurchaseOrder" parameterType="PurchaseOrder" useGeneratedKeys="true" keyProperty="purchaseOrderId">
+        insert into purchase_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="staffId != null">staff_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="staffId != null">#{staffId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseOrder" parameterType="PurchaseOrder">
+        update purchase_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="staffId != null">staff_id = #{staffId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where purchase_order_id = #{purchaseOrderId}
+    </update>
+
+    <delete id="deletePurchaseOrderByPurchaseOrderId" parameterType="Long">
+        delete from purchase_order where purchase_order_id = #{purchaseOrderId}
+    </delete>
+
+    <delete id="deletePurchaseOrderByPurchaseOrderIds" parameterType="String">
+        delete from purchase_order where purchase_order_id in 
+        <foreach item="purchaseOrderId" collection="array" open="(" separator="," close=")">
+            #{purchaseOrderId}
+        </foreach>
+    </delete>
+    
+    <delete id="deletePurchaseOrderDetailByPurchaseOrderIds" parameterType="String">
+        delete from purchase_order_detail where purchase_order_id in 
+        <foreach item="purchaseOrderId" collection="array" open="(" separator="," close=")">
+            #{purchaseOrderId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePurchaseOrderDetailByPurchaseOrderId" parameterType="Long">
+        delete from purchase_order_detail where purchase_order_id = #{purchaseOrderId}
+    </delete>
+
+    <insert id="batchPurchaseOrderDetail">
+        insert into purchase_order_detail( detail_id, purchase_order_id, product_id, quantity) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.detailId}, #{item.purchaseOrderId}, #{item.productId}, #{item.quantity})
+        </foreach>
+    </insert>
+</mapper>
