@@ -147,14 +147,14 @@
             icon="el-icon-search"
             @click="handleSearch(scope.row)"
           >查看</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:order:edit']"
             >修改</el-button
-          >
+          > -->
           <el-button
             size="mini"
             type="text"

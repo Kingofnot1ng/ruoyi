@@ -1,6 +1,8 @@
 package com.ruoyi.business.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.business.mapper.PurchaseOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.business.mapper.SupplierMapper;
@@ -18,6 +20,7 @@ public class SupplierServiceImpl implements ISupplierService
 {
     @Autowired
     private SupplierMapper supplierMapper;
+    private PurchaseOrderMapper purchaseOrderMapper;
 
     /**
      * 查询供应商

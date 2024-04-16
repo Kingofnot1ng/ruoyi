@@ -18,6 +18,13 @@ public interface InventoryMapper
      * @return 库存
      */
     public Inventory selectInventoryByRecordId(Long recordId);
+    /**
+     * 查询库存
+     *
+     * @param productId 库存主键
+     * @return 库存
+     */
+    public Inventory selectInventoryByProductId(Long productId);
 
     /**
      * 查询库存列表
@@ -58,4 +65,6 @@ public interface InventoryMapper
      * @return 结果
      */
     public int deleteInventoryByRecordIds(Long[] recordIds);
+
+
 }

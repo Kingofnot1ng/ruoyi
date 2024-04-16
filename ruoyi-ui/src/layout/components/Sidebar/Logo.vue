@@ -35,7 +35,8 @@ export default {
   },
   data() {
     return {
-      title: process.env.VUE_APP_TITLE,
+      // title: process.env.VUE_APP_TITLE,
+      title: "管理系统",
       logo: logoImg
     }
   }

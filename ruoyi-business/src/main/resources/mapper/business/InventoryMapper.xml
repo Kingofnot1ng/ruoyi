@@ -30,6 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectInventoryVo"/>
         where record_id = #{recordId}
     </select>
+
+    <select id="selectInventoryByProductId" parameterType="Long" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        where product_id = #{product_id}
+    </select>
         
     <insert id="insertInventory" parameterType="Inventory" useGeneratedKeys="true" keyProperty="recordId">
         insert into inventory

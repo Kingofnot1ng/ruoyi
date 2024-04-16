@@ -32,6 +32,19 @@ public class InventoryServiceImpl implements IInventoryService
     }
 
     /**
+     * 根据商品名查询库存
+     *
+     * @param productId 商品Id
+     * @return 库存
+     */
+    @Override
+    public Inventory selectInventoryByProductId(Long productId)
+    {
+        return inventoryMapper.selectInventoryByProductId(productId);
+    }
+
+
+    /**
      * 查询库存列表
      * 
      * @param inventory 库存
